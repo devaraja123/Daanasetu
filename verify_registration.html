@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Verify Email | DaanaSetu{% endblock %}{% block content %}
+<div class="auth-wrap"><div class="auth-card"><span class="eyebrow">ACCOUNT SECURITY</span><h2>Verify your email</h2>
+<p>We sent a 6-digit verification code to <strong>{{ email }}</strong>.</p>
+<form method="post"><label class="form-label" for="code">Email verification code</label>
+<input class="form-control" id="code" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required placeholder="Enter 6-digit code">
+<button class="btn btn-primary w-100 mt-3" type="submit">Verify email &amp; create account</button></form>
+<form method="post" action="{{ url_for('resend_registration_code') }}" class="mt-3"><button class="btn btn-outline-secondary w-100" type="submit">Resend code (after 60 seconds)</button></form>
+<p class="small muted mt-3">Code expires after 10 minutes. Your account is created only after verification.</p></div></div>
+{% endblock %}

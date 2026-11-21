@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% block title %}DaanaSetu | Home{% endblock %}
+{% block content %}
+<section class="hero p-4 p-lg-5 mb-5"><div class="row align-items-center"><div class="col-lg-7">
+<span class="eyebrow">INTELLIGENT COMMUNITY RESOURCE REDISTRIBUTION</span><h1 class="display-4 fw-bold mt-3">Give useful things<br><span class="gradient-text">a second purpose.</span></h1>
+<p class="lead mt-3">A community platform where anyone registered can accept an available donation and collect it directly from the donor, while verified NGOs publish resource requirements.</p>
+<div class="d-flex gap-2 flex-wrap mt-4"><a class="btn btn-primary btn-lg" href="{{ url_for('register') }}">Get Started</a><a class="btn btn-outline-light btn-lg" href="#how">How it works</a></div>
+</div><div class="col-lg-5 mt-4 mt-lg-0"><div class="hero-art"><div class="circle-art">🤝</div><div class="float-tag tag-one">Donate · Match · Deliver</div><div class="float-tag tag-two">Community first</div></div></div></div></section>
+<div class="row g-3 mb-5">{% for label,value in [('Donations listed',stats.donations),('Verified NGOs',stats.ngos),('Completed matches',stats.completed),('Open community needs',stats.needs)] %}
+<div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-number">{{ value }}</div><div class="muted">{{ label }}</div></div></div>{% endfor %}</div>
+<section id="how" class="mb-5"><div class="section-head"><span class="eyebrow">THE PROCESS</span><h2>How DaanaSetu works</h2></div><div class="row g-3">
+{% for n,t,d in [('01','List a donation','Donors add item details, quantity, condition and pickup area.'),('02','Publish a need','Verified NGOs share their current resource requirements.'),('03','Match intelligently','A transparent score ranks eligible donation-request pairs.'),('04','Collect directly','After acceptance, the recipient gets the donor phone number and pickup map, then collects the item themselves.')] %}
+<div class="col-md-6 col-lg-3"><div class="feature-card h-100"><span class="step">{{ n }}</span><h5>{{ t }}</h5><p class="muted mb-0">{{ d }}</p></div></div>{% endfor %}</div></section>
+<section><div class="section-head"><span class="eyebrow">AVAILABLE RESOURCES</span><h2>Recent donations</h2></div><div class="row g-3">{% for d in latest %}
+<div class="col-md-6 col-lg-4"><div class="feature-card h-100">{% if d.image %}<img class="donation-thumb" src="{{ url_for('static',filename='uploads/'+d.image) }}">{% else %}<div class="placeholder-thumb">📦</div>{% endif %}<span class="badge-soft">{{ d.category }}</span><h5 class="mt-2">{{ d.title }}</h5><p class="muted">{{ d.quantity }} {{ d.unit }} · {{ d.condition }} · {{ d.area }}</p></div></div>
+{% else %}<p class="muted">No public donation listings yet.</p>{% endfor %}</div></section>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Feedback · DaanaSetu{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-9">
+<h1 class="fw-bold mb-2">⭐ Feedback & Reviews</h1>
+<p class="text-muted">Feedback is available only after the donor confirms successful handover.</p>
+{% if not claim_id %}<h4>Deliveries ready for feedback</h4>{% for item in completed %}<p><a class="btn btn-outline-success" href="{{ url_for('feedback',claim_id=item.id) }}">⭐ Rate {{ item.title }} (Pickup #{{ item.id }})</a></p>{% else %}<p class="text-muted">No completed deliveries are awaiting feedback.</p>{% endfor %}{% endif %}
+{% if claim_id %}<div class="card shadow-sm border-0 rounded-4 mb-4"><div class="card-body p-4">
+<h4 class="mb-3">{{ 'Rate your successful delivery' if claim_id else 'Share your feedback' }}</h4>
+{% if already %}<div class="alert alert-info">You already reviewed this pickup. Thank you!</div>{% else %}
+<form method="post" action="{{ url_for('feedback') }}">
+{% if claim_id %}<input type="hidden" name="claim_id" value="{{ claim_id }}">{% endif %}
+<label class="form-label fw-semibold">Your rating</label>
+<div class="d-flex flex-wrap gap-3 mb-3" role="radiogroup" aria-label="Star rating">
+{% for n in range(1,6) %}<label class="btn btn-outline-warning text-dark"><input class="form-check-input me-1" type="radio" name="rating" value="{{ n }}" required> {{ n }} ★</label>{% endfor %}
+</div>
+<label for="comment" class="form-label fw-semibold">Describe your delivery experience</label>
+<textarea class="form-control mb-3" id="comment" name="comment" rows="4" minlength="5" maxlength="1000" required placeholder="Describe the item condition, handover experience, and any suggestions..."></textarea>
+<button type="submit" class="btn btn-primary px-4">Submit feedback</button>
+</form>{% endif %}</div></div>{% endif %}
+<h4>My feedback</h4>
+{% for f in mine %}<div class="card mb-2 border-0 shadow-sm"><div class="card-body"><div class="text-warning fs-5">{{ '★' * f.rating }}{{ '☆' * (5-f.rating) }}</div><div class="small text-muted">{{ f.title or 'General feedback' }} · {{ f.created_at }}</div><p class="mb-0 mt-2" style="white-space:pre-wrap">{{ f.comment }}</p></div></div>{% else %}<p class="text-muted">You haven't submitted feedback yet.</p>{% endfor %}
+<h4 class="mt-4">Community reviews</h4>
+{% for f in recent %}<div class="card mb-2 border-0 shadow-sm"><div class="card-body"><strong>{{ f.name }}</strong><span class="text-warning ms-2">{{ '★' * f.rating }}{{ '☆' * (5-f.rating) }}</span><div class="small text-muted">{{ f.title or 'General feedback' }} · {{ f.created_at }}</div><p class="mb-0 mt-2" style="white-space:pre-wrap">{{ f.comment }}</p></div></div>{% else %}<p class="text-muted">No reviews yet. Be the first!</p>{% endfor %}
+</div></div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}My Profile | DaanaSetu{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+  <div><span class="eyebrow">ACCOUNT SETTINGS</span><h2 class="mb-1">My profile</h2><p class="muted mb-0">Manage your personal details, security and DaanaSetu activity.</p></div>
+  <a class="btn btn-outline-primary" href="{{ url_for('dashboard') }}">Back to dashboard</a>
+</div>
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="form-panel h-100">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        {% if user.profile_photo %}<img src="{{ url_for('static',filename='uploads/'+user.profile_photo) }}" class="profile-avatar" alt="Profile photo">
+        {% else %}<div class="profile-avatar profile-placeholder">{{ user.name[:1]|upper }}</div>{% endif %}
+        <div><h5 class="mb-1">{{ user.name }}</h5><div class="muted small">{{ user.email }}</div><span class="badge-soft">{{ user.role|title }}</span></div>
+      </div>
+      <form method="post" enctype="multipart/form-data" class="row g-3">
+        <div class="col-12"><label class="form-label">Full name *</label><input class="form-control" name="name" value="{{ user.name }}" required maxlength="100"></div>
+        <div class="col-12"><label class="form-label">Email</label><input class="form-control" value="{{ user.email }}" disabled><div class="form-text">Email address is your login ID and cannot be changed here.</div></div>
+        <div class="col-md-6"><label class="form-label">Phone number</label><input class="form-control" name="phone" value="{{ user.phone or '' }}" maxlength="20"></div>
+        <div class="col-md-6"><label class="form-label">City / service area *</label><input class="form-control" name="area" value="{{ user.area or '' }}" required maxlength="120"></div>
+        <div class="col-12"><label class="form-label">Address</label><textarea class="form-control" name="address" rows="2" maxlength="500" placeholder="House / street / locality">{{ user.address or '' }}</textarea><div class="form-text">Your full address is not shown publicly. Pickup details are shared only after a donation is accepted.</div></div>
+        <div class="col-12"><label class="form-label">Profile photograph (PNG, JPG or WEBP; max 5 MB)</label><input class="form-control" type="file" name="profile_photo" accept=".png,.jpg,.jpeg,.webp"></div>
+        <div class="col-12"><button class="btn btn-primary">Save profile</button></div>
+      </form>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="form-panel mb-4">
+      <span class="eyebrow">ACCOUNT SECURITY</span><h4>Change password</h4>
+      <form method="post" action="{{ url_for('change_password') }}" class="row g-3">
+        <div class="col-12"><label class="form-label">Current password</label><input class="form-control" type="password" name="current_password" required autocomplete="current-password"></div>
+        <div class="col-md-6"><label class="form-label">New password</label><input class="form-control" type="password" name="new_password" minlength="8" required autocomplete="new-password"></div>
+        <div class="col-md-6"><label class="form-label">Confirm new password</label><input class="form-control" type="password" name="confirm_password" minlength="8" required autocomplete="new-password"></div>
+        <div class="col-12"><button class="btn btn-outline-primary">Update password</button><a class="ms-3 small" href="{{ url_for('forgot_password') }}">Forgot your password?</a></div>
+      </form>
+    </div>
+    <div class="form-panel">
+      <span class="eyebrow">YOUR ACTIVITY</span><h4>Donation history</h4>
+      <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Donation</th><th>Quantity</th><th>Status</th></tr></thead><tbody>
+      {% for d in donations %}<tr><td>{{ d.title }}<div class="small muted">{{ d.created_at }}</div></td><td>{{ d.quantity }} {{ d.unit }}</td><td><span class="badge text-bg-secondary">{{ d.status }}</span></td></tr>{% else %}<tr><td colspan="3" class="muted">No donations listed yet.</td></tr>{% endfor %}
+      </tbody></table></div>
+    </div>
+  </div>
+</div>
+<div class="form-panel mt-4"><span class="eyebrow">PICKUP HISTORY</span><h4>My pickup activity</h4><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Donation</th><th>Role</th><th>Other party</th><th>Date</th><th>Status</th><th></th></tr></thead><tbody>
+{% for p in pickups %}<tr><td>{{ p.title }}</td><td>{{ 'Donor' if p.donor_id==user.id else 'Recipient' }}</td><td>{{ p.claimant_name if p.donor_id==user.id else p.donor_name }}</td><td>{{ p.created_at }}</td><td>{{ p.status }}</td><td><a class="btn btn-sm btn-outline-primary" href="{{ url_for('pickup_detail',claim_id=p.id) }}">Details</a></td></tr>{% else %}<tr><td colspan="6" class="muted">No pickup activity yet.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

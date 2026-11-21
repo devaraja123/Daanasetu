@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block title %}Reports | DaanaSetu{% endblock %}{% block content %}
+<span class="eyebrow">ADMINISTRATION</span><h2>Analytics and impact dashboard</h2><div class="row g-3 my-3">{% for k,v in [('Donations listed',totals.donations),('Verified NGOs',totals.verified_ngos),('Completed matches',totals.fulfilled),('Open requirements',totals.open_needs)] %}<div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-number">{{ v }}</div><div class="muted">{{ k }}</div></div></div>{% endfor %}</div>
+<div class="row g-3"><div class="col-lg-6"><div class="feature-card"><h5>Donations by category</h5><canvas id="catChart"></canvas></div></div><div class="col-lg-6"><div class="feature-card"><h5>Donation status</h5><canvas id="statusChart"></canvas></div></div></div>
+{% endblock %}{% block scripts %}<script src="https://cdn.jsdelivr.net/npm/chart.js"></script><script>
+new Chart(document.getElementById('catChart'),{type:'bar',data:{labels:{{ categories|map(attribute='category')|list|tojson }},datasets:[{label:'Donation count',data:{{ categories|map(attribute='total')|list|tojson }}]}},options:{responsive:true}});
+new Chart(document.getElementById('statusChart'),{type:'doughnut',data:{labels:{{ statuses|map(attribute='status')|list|tojson }},datasets:[{data:{{ statuses|map(attribute='total')|list|tojson }}]}},options:{responsive:true}});
+</script>{% endblock %}
